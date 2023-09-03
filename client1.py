@@ -1,7 +1,7 @@
 import socket
 
 host_ip = input("Enter host ip: ")
-HOST = host_ip  # Standard loopback interface address
+HOST = host_ip  
 PORT = 65432  # Port to listen on 
 
 # Text file reading
