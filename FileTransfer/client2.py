@@ -1,9 +1,9 @@
 import socket
 
-server_ip = input("Enter Server IP: ")
-server_port = int(input("Enter Server Port: "))
-HOST = server_ip  # The server's hostname or IP address
-PORT = server_port  # The port used by the server
+server_ip = input("Enter IP to connect : ")
+server_port = int(input("Enter Port to connect: "))
+HOST = server_ip  # The client1's IP address
+PORT = server_port  # The port used by the client1
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))

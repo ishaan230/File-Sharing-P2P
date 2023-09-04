@@ -1,6 +1,6 @@
 import socket
 
-host_ip = input("Enter host ip: ")
+host_ip = input("Enter ip: ")
 HOST = host_ip  
 PORT = 65432  # Port to listen on 
 
