@@ -18,14 +18,25 @@ class Sender:
         return None
 
     def setup_listener(self):
-        sckt = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sckt.bind((self.ip_addr, self.port))
+        sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sckt.bind((self.ip_addr, self.port))
+        except OSError:
+            sckt.bind((self.ip_addr, self.alt_port))
+        else:
+            return None
         return sckt
 
     def send_message(self, client_addr, content):
         sckt = self.setup_listener()
-        res = sckt.sendto(content, client_addr)
-        print(res)
+        if sckt:
+            print(client_addr)
+            sckt.connect(client_addr)
+            res = sckt.send(content)
+            sckt.close()
+            print(res)
+        else:
+            raise RuntimeError("Unable to bind socket")
 
     def upload_file(self, file_path, peers):
         content = self.read_file(file_path)
@@ -35,4 +46,5 @@ class Sender:
 
 
 sender = Sender()
-sender.send_message(('0.0.0.0', '8000'), "Hello Akshat!")
+msg = b"Hellooo"
+sender.send_message(('0.0.0.0', 8000), msg)
