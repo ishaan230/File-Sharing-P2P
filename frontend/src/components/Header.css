@@ -1,0 +1,25 @@
+.navBar{
+    margin: 0rem;
+    background-color: grey;
+}
+
+.list{
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 0.25rem;
+    color: white;
+}
+
+.list li{
+    padding: 0.7rem;
+    margin: 0.7rem;
+    font-size: larger;
+    cursor: pointer;
+}
+
+.list li:hover{
+    color: rgb(174, 187, 198);
+}
