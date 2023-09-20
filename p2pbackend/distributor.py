@@ -1,4 +1,5 @@
 import socket
+import math
 
 
 class Sender:
@@ -10,11 +11,11 @@ class Sender:
 
     def read_file(self, file_path):
         content = None
-        with open(file_path, "r") as file:
+        with open(file_path, "rb") as file:
             content = file.read()
             file.close()
         if content:
-            return bytes(content, 'utf-8')
+            return content
         return None
 
     def setup_listener(self):
@@ -27,8 +28,7 @@ class Sender:
             return None
         return sckt
 
-    def send_message(self, client_addr, content):
-        sckt = self.setup_listener()
+    def send_message(self, sckt, client_addr, content):
         if sckt:
             print(client_addr)
             sckt.connect(client_addr)
@@ -38,13 +38,35 @@ class Sender:
         else:
             raise RuntimeError("Unable to bind socket")
 
-    def upload_file(self, file_path, peers):
+    def break_file(self, file_path):
         content = self.read_file(file_path)
+
+        if content:
+            part_size = 1024
+            parts = []
+            cntr = 0
+            wrd = ''
+            for a in content:
+                if cntr == part_size:
+                    parts.append(wrd)
+                    cntr = 1
+                    wrd = str(a)
+                wrd += str(a)
+                cntr += 1
+            print(wrd)
+
+    def upload_file(self, file_path, peers):
+        sckt = self.setup_listener()
+        content = self.read_file(file_path)
+        # content_parts = self.break_file()
+        print(content)
         for peer in peers:
-            self.send_message(peer, content)
+            self.send_message(sckt, peer, content)
         print("Sent")
 
 
 sender = Sender()
-msg = b"Hellooo"
-sender.send_message(('0.0.0.0', 8000), msg)
+p = input()
+sender.break_file(p)
+# sender.upload_file(p, ('0.0.0.0', 8000))
+# sender.send_message(('0.0.0.0', 8000), msg)
