@@ -7,8 +7,12 @@ const Upload = () => {
     const [uploadMessage, setUploadMessage] = useState("");
 
     const fileChange = (e) => {
-        setFileName(e.target.files[1]);
+        setFileName(e.target.files[0].name);
     }
+
+    // const upload = async (e) => {
+    //    
+    // }
     return ( <div className="up-container">
 
      <h1>{uploadMessage}</h1>   
@@ -17,7 +21,7 @@ const Upload = () => {
       className="row"
       onSubmit={(e) => {
         e.preventDefault();
-        setTimeout(() => {setUploadMessage("File " + " uploaded.");}, 1000);
+        setTimeout(() => {setUploadMessage("File " + fileName + " uploaded.");}, 1000);
       }}
     >
       <input
