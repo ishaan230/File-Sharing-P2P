@@ -42,7 +42,7 @@ class Sender:
         content = self.read_file(file_path)
 
         if content:
-            part_size = 1024
+            part_size = 1
             parts = []
             cntr = 0
             wrd = ''
@@ -53,7 +53,9 @@ class Sender:
                     wrd = str(a)
                 wrd += str(a)
                 cntr += 1
-            print(wrd)
+            parts.append(wrd)
+            print(parts, len(parts))
+        return [content]
 
     def upload_file(self, file_path, peers):
         sckt = self.setup_listener()
@@ -65,8 +67,15 @@ class Sender:
         print("Sent")
 
 
-sender = Sender()
-p = input()
-sender.break_file(p)
+# sender = Sender()
+# p = input()
+# parts = sender.break_file(p)
+# x = b''
+#
+# print(x)
+#
+# with open('x.png', 'wb') as f:
+#     f.write(x)
+#     f.close()
 # sender.upload_file(p, ('0.0.0.0', 8000))
 # sender.send_message(('0.0.0.0', 8000), msg)
