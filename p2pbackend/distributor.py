@@ -2,6 +2,7 @@ import socket
 from file_utils import break_file
 import os
 import json
+import hashlib
 
 '''
 Provide addresses in tuple format
@@ -49,11 +50,9 @@ class Sender:
         else:
             new_peers = peers
             extra_req = len(parts) - len(peers)
-            print(extra_req)
             i = 0
             iter = 0
             while i < extra_req:
-                print(iter)
                 if iter >= len(peers):
                     iter = 0
                 new_peers.append(peers[iter])
@@ -64,17 +63,28 @@ class Sender:
     def upload_file(self, file_path, peers):
         sckt = self.setup_listener()
         parts = self.break_file(file_path)
-        file_type = os.path.splitext(file_path)
+        file_info = os.path.splitext(file_path)
+        filename = file_info[0]
+        if filename.__contains__('/'):
+            filename = filename[filename.rindex('/')+1:]
+        orig_file = filename
+        filename = hashlib.md5(filename.encode('utf-8')).hexdigest()
+        print("HASH", filename)
         for ctr, peer, part in self.populate_peers(peers, parts):
-            print(peer)
-            meta = {"file_name": f'{ctr}.part', "extension": file_type, "content": part, "offset": ctr, "length": len(parts), "original_size": len(parts)*self.CHUNK_SIZE}
+            meta = {"part_file_name": f'{ctr}.part',
+                    "original_name": orig_file,
+                    "uid": filename,
+                    "extension": file_info[1], "content": part,
+                    "offset": ctr, "length": len(parts),
+                    "original_size": len(parts)*self.CHUNK_SIZE}
+
             json_meta = json.dumps(meta)
             print(json_meta)
-            self.send_message(sckt, peer, json_meta)
+            # self.send_message(sckt, peer, json_meta)
         print("Sent")
 
 
 if __name__ == "__main__":
     sender = Sender()
     peers = ['0.0.0.0:8000']
-    sender.upload_file('o.jpg', peers)
+    sender.upload_file('/home/akshat/clg/se_project/File-Sharing-P2P/p2pbackend/o.jpg', peers)
