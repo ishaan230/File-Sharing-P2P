@@ -1,5 +1,12 @@
 import socket
-import math
+from file_utils import break_file
+import os
+import json
+
+'''
+Provide addresses in tuple format
+Handshaked peers should only be allowed
+'''
 
 
 class Sender:
@@ -8,15 +15,7 @@ class Sender:
         self.ip_addr = socket.gethostbyname(self.hostname)
         self.port = 65432
         self.alt_port = 54321
-
-    def read_file(self, file_path):
-        content = None
-        with open(file_path, "rb") as file:
-            content = file.read()
-            file.close()
-        if content:
-            return content
-        return None
+        self.CHUNK_SIZE = 1024
 
     def setup_listener(self):
         sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,43 +38,43 @@ class Sender:
             raise RuntimeError("Unable to bind socket")
 
     def break_file(self, file_path):
-        content = self.read_file(file_path)
+        return break_file(file_path, self.CHUNK_SIZE)
 
-        if content:
-            part_size = 1
-            parts = []
-            cntr = 0
-            wrd = ''
-            for a in content:
-                if cntr == part_size:
-                    parts.append(wrd)
-                    cntr = 1
-                    wrd = str(a)
-                wrd += str(a)
-                cntr += 1
-            parts.append(wrd)
-            print(parts, len(parts))
-        return [content]
+    def populate_peers(self, peers, parts):
+        ctr = [i for i in range(0, len(parts))]
+        if len(peers) == len(parts):
+            return zip(ctr, peers, parts)
+        elif len(peers) > len(parts):
+            return zip(ctr, peers[0:len(parts)], parts)
+        else:
+            new_peers = peers
+            extra_req = len(parts) - len(peers)
+            print(extra_req)
+            i = 0
+            iter = 0
+            while i < extra_req:
+                print(iter)
+                if iter >= len(peers):
+                    iter = 0
+                new_peers.append(peers[iter])
+                iter += 1
+                i += 1
+            return zip(ctr, new_peers, parts)
 
     def upload_file(self, file_path, peers):
         sckt = self.setup_listener()
-        content = self.read_file(file_path)
-        # content_parts = self.break_file()
-        print(content)
-        for peer in peers:
-            self.send_message(sckt, peer, content)
+        parts = self.break_file(file_path)
+        file_type = os.path.splitext(file_path)
+        for ctr, peer, part in self.populate_peers(peers, parts):
+            print(peer)
+            meta = {"file_name": f'{ctr}.part', "extension": file_type, "content": part, "offset": ctr, "length": len(parts), "original_size": len(parts)*self.CHUNK_SIZE}
+            json_meta = json.dumps(meta)
+            print(json_meta)
+            self.send_message(sckt, peer, json_meta)
         print("Sent")
 
 
-# sender = Sender()
-# p = input()
-# parts = sender.break_file(p)
-# x = b''
-#
-# print(x)
-#
-# with open('x.png', 'wb') as f:
-#     f.write(x)
-#     f.close()
-# sender.upload_file(p, ('0.0.0.0', 8000))
-# sender.send_message(('0.0.0.0', 8000), msg)
+if __name__ == "__main__":
+    sender = Sender()
+    peers = ['0.0.0.0:8000']
+    sender.upload_file('o.jpg', peers)
