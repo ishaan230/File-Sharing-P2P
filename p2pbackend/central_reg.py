@@ -23,12 +23,12 @@ class MongoWrapper:
     def get_collection_data(self, collection):
         return self.primary_db[collection].find({})
 
-    def add_data_to_collection(self, collection_name, data) -> bool:
+    def add_data_to_collection(self, collection_name, data):
         try:
-            self.primary_db[collection_name].insert_one(data)
-            return True
+            data = self.primary_db[collection_name].insert_one(data)
+            return str(data.inserted_id)
         except Exception:
-            return False
+            return None
 
     # https://www.w3schools.com/python/python_mongodb_update.asp
     def update_data(self, collection_name, data, updated_data) -> bool:

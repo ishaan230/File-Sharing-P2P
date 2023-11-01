@@ -4,6 +4,8 @@ import os
 import json
 import hashlib
 
+from central_reg import MongoWrapper
+
 '''
 Provide addresses in tuple format
 Handshaked peers should only be allowed
@@ -17,6 +19,7 @@ class Sender:
         self.port = 65432
         self.alt_port = 54321
         self.CHUNK_SIZE = 1024
+        self.db_engine = MongoWrapper()
 
     def setup_listener(self):
         sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -69,22 +72,27 @@ class Sender:
             filename = filename[filename.rindex('/')+1:]
         orig_file = filename
         filename = hashlib.md5(filename.encode('utf-8')).hexdigest()
-        print("HASH", filename)
+        file_meta = {"name": orig_file+file_info[1], "hash": filename, "size": len(parts) * self.CHUNK_SIZE, "type": file_info[1]}
+        file_id = self.db_engine.add_data_to_collection("File", file_meta)
+        print("mongooo", file_id)
         for ctr, peer, part in self.populate_peers(peers, parts):
             meta = {"part_file_name": f'{ctr}.part',
                     "original_name": orig_file,
-                    "uid": filename,
+                    "file_id": file_id,
                     "extension": file_info[1], "content": part,
                     "offset": ctr, "length": len(parts),
+                    "user_ip": "TBD",
                     "original_size": len(parts)*self.CHUNK_SIZE}
-
             json_meta = json.dumps(meta)
             print(json_meta)
-            # self.send_message(sckt, peer, json_meta)
+            meta.pop("content")
+            self.db_engine.add_data_to_collection("Part", meta)
+
+            self.send_message(sckt, peer, json_meta)
         print("Sent")
 
 
-if __name__ == "__main__":
-    sender = Sender()
-    peers = ['0.0.0.0:8000']
-    sender.upload_file('/home/akshat/clg/se_project/File-Sharing-P2P/p2pbackend/o.jpg', peers)
+# if __name__ == "__main__":
+#     sender = Sender()
+#     peers = ['0.0.0.0:8000']
+#     sender.upload_file('/home/akshat/clg/se_project/File-Sharing-P2P/p2pbackend/o.jpg', peers)
