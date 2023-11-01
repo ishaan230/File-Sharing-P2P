@@ -19,7 +19,6 @@ def get_details():
         sock.connect(("8.8.8.8", 80))
         ip = sock.getsockname()[0]
         host_details.append([hostname, ip])
-        host_details = [["hostname4","8.8.8.8"]]
 
         for entry in fetched_data:
             if host_details[0][0] in entry['User_id']:
