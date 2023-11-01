@@ -1,10 +1,15 @@
 import pymongo
+from dotenv import load_dotenv
+import os
 
 
 class MongoWrapper:
     # db_name: File, FileParts, Peers
     def __init__(self):
-        db_uri = "mongodb+srv://seproj:seproj2023@cluster0.pw1hy3v.mongodb.net/?retryWrites=true&w=majority"
+        load_dotenv()
+        print(os.environ.get("DB_URI"))
+        db_uri = os.environ.get("DB_URI")
+        # db_uri = ""
         self.mongo_cli = pymongo.MongoClient(db_uri)
         self.collections = ["File", "Peer", "Part"]
         self.set_databases()
@@ -40,7 +45,7 @@ class MongoWrapper:
             return False
 
 
-# mn = MongoWrapper()
+mn = MongoWrapper()
 #
 # mn.add_data_to_collection("File", {"name": "Test file", "size": 50})
 #
