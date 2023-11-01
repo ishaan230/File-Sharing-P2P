@@ -23,7 +23,7 @@ class MongoWrapper:
     def get_collection_data(self, collection):
         return self.primary_db[collection].find({})
 
-    def add_data_to_collection(self, collection_name, data):
+    def add_data_to_collection(self, collection_name, data) -> bool:
         try:
             self.primary_db[collection_name].insert_one(data)
             return True
@@ -31,13 +31,21 @@ class MongoWrapper:
             return False
 
     # https://www.w3schools.com/python/python_mongodb_update.asp
-    def update_data(self, collection_name, data, updated_data):
+    def update_data(self, collection_name, data, updated_data) -> bool:
         dt = {"$set": updated_data}
-        self.primary_db[collection_name].update_one(data, dt)
+        try:
+            self.primary_db[collection_name].update_one(data, dt)
+            return True
+        except Exception:
+            return False
 
 
-mn = MongoWrapper()
-
-mn.add_data_to_collection("File", {"name": "Test file", "size": 50})
-
-print(mn.get_collection_data("File"))
+# mn = MongoWrapper()
+#
+# mn.add_data_to_collection("File", {"name": "Test file", "size": 50})
+#
+# data = mn.get_collection_data("File")
+#
+# for a in data:
+#     print(a)
+#
