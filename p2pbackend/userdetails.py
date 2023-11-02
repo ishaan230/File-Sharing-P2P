@@ -13,8 +13,8 @@ def get_details():
         print("Data from DB:")
         print(fetched_data)
         hostname = socket.gethostname()
-        salt = time.time()    
-        hostname = hostname + str(salt) 
+        # salt = time.time()    
+        # hostname = hostname + str(salt) 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.connect(("8.8.8.8", 80))
         ip = sock.getsockname()[0]
