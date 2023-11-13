@@ -1,9 +1,10 @@
 import socket
-import time
 import central_reg
+import uuid
 
 def get_details():
     try:
+        mac = uuid.getnode()
         host_details = []
         fetched_data = []
         object = central_reg.MongoWrapper()
@@ -12,14 +13,14 @@ def get_details():
             fetched_data.append(a)
         print("Data from DB:")
         print(fetched_data)
-        hostname = socket.gethostname()
+        hostname = ':'.join(("%012X" % mac)[i:i+2] for i in range(0, 12, 2))
+        print(hostname)
         # salt = time.time()    
         # hostname = hostname + str(salt) 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.connect(("8.8.8.8", 80))
         ip = sock.getsockname()[0]
         host_details.append([hostname, ip])
-
         for entry in fetched_data:
             if host_details[0][0] in entry['User_id']:
                 print("True")
