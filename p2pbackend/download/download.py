@@ -2,48 +2,49 @@ import socket
 import json
 import os
 import select
-from dotenv import load_dotenv
+from utils import get_config
 
-def get_config():
-    try:
-        load_dotenv()
-        return True
-    except Exception:
-        print("Could not load configuration")
-        return False
 
-def receive_download(file_info, offset, seeder):
 
+def request_download(fid, offset, seeder):
+
+    timeout_dur = 100
     python_message = {
             "operation": "Request download",
-            "file_uid": file_info["file_uid"],
+            "file_uid": fid,
             "offset": offset
         }
     
     message = json.dumps(python_message)
     SHARE_PATH = os.environ['SHARE_PATH']
+    seeder_ip = seeder['seeder_ip']
+    seeder_port = int(seeder['seeder_port'])
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.connect((seeder["seeder_ip"], seeder["seeder_port"]))
+        sock.connect((seeder_ip, seeder_port))
+        print("Connected to sender!")
         sock.sendall(bytes(message, encoding='utf-8'))
+        print("Sent request")
         
         sock.setblocking(0)
 
-        ready = select.select([sock], [], [], 50) #Last argument is timeout in seconds.
+        ready = select.select([sock], [], [], timeout_dur) #Last argument is timeout in seconds.
+        print(ready)
         if  ready[0]:
             part = b''
             while True:
                 data = sock.recv(1024)
                 part += data
                 if not data:
-                    with open(f"{SHARE_PATH}\{offset}.part", "wb+") as file_part:
+                    with open(f"{SHARE_PATH}\{python_message['file_uid']}_{offset + 1}.part", "ab+") as file_part:
                         file_part.write(part)
                     return True
         else:
+            print("Request timed out!")
             return False
         
 
-def make_download_request(file_info, seeder_info):
+def make_download_requests(file_info, seeder_info):
 
     #fetch file_info and seeder_info from database using file uid
 
@@ -68,15 +69,17 @@ def make_download_request(file_info, seeder_info):
 
         for seeder in seeders_for_part:
             #Here will start send http request to Flask server to start concurrent downloads with each each seeder. Will have to refactor.
-            if receive_download(file_info, part_req, seeder):
+            if request_download(file_info, part_req, seeder):
                 print("Sent message to seeder!")
             else:
                 print("something went wrong!!")
 
     
 def main():
-    LOCALHOST_IP = '127.0.0.1'
-    HOST_PORT = 12345
+    get_config()
+
+    LOCALHOST_IP = os.environ['LOCAL_IP']
+    HOST_PORT = os.environ['U_PORT']
     file_info = {
         "file_uid": 1,
         "file_total_parts": 1,
@@ -89,10 +92,12 @@ def main():
         "seeder_ip": LOCALHOST_IP,
         "seeder_port": HOST_PORT
     }]
-    make_download_request(file_info, seeders_info)
+
+    request_download(file_info['file_uid'], 0, seeders_info[0])
+    
 
 if __name__ == "__main__":
-        get_config()
-        # receive_download()
+        main()
+        
 
 

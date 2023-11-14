@@ -1,2 +1,5 @@
 p2pbackend/venv
 p2pbackend/.env
+peerenv/
+p2pbackend/download/.env
+share/

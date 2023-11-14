@@ -12,6 +12,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
     sock.bind((LOCAL_IP, PORT))
     sock.setblocking(0)
     ready = select.select([sock], [], [], 10)
+    print(ready)
     if ready[0]:
         message = sock.recv(1024)
         with open(f"{SHARE_PATH}\hello.part", "wb+") as openfile:
