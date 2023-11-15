@@ -10,9 +10,10 @@ const Upload = () => {
         setFileName(e.target.files[0].name);
     }
 
-    // const upload = async (e) => {
-    //    
-    // }
+    const handleUpload = (e) => {
+        console.log("Send upload request for ", fileName);
+    }
+
     return ( <div className="up-container">
 
      <h1>{uploadMessage}</h1>   
@@ -29,7 +30,7 @@ const Upload = () => {
         placeholder="Enter a filename..."
         onChange= {fileChange}
       />
-      <button type="submit">Upload</button>
+      <button type="submit" onClick={handleUpload}>Upload</button>
     </form>
     </div>);
 }

@@ -15,5 +15,10 @@ def upload_file():
     return response
 
 
+@app.route("/download", methods=["POST"])
+def download_file():
+    print(request.data)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
