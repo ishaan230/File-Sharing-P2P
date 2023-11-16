@@ -1,17 +1,35 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./Upload.css";
+import { open } from '@tauri-apps/api/dialog';
 
 const Upload = () => {
 
     const [fileName, setFileName] = useState("");
     const [uploadMessage, setUploadMessage] = useState("");
 
+    const inputRef = useRef(null);
+
     const fileChange = (e) => {
-        setFileName(e.target.files[0].name);
+        setFileName(e.target.value);
     }
 
     const handleUpload = (e) => {
         console.log("Send upload request for ", fileName);
+    }
+
+    const handleFileSelection = async (e) => {
+        // Open a selection dialog for image files
+        console.log("OK")
+        const selected = await open({
+          multiple: false,
+          title: "Select file"
+        });
+
+        if(selected){
+            console.log(selected)
+            inputRef.current.value = selected
+            setFileName(selected)
+        }
     }
 
     return ( <div className="up-container">
@@ -25,11 +43,8 @@ const Upload = () => {
         setTimeout(() => {setUploadMessage("File " + fileName + " uploaded.");}, 1000);
       }}
     >
-      <input
-        type = "file"
-        placeholder="Enter a filename..."
-        onChange= {fileChange}
-      />
+      <button onClick={handleFileSelection}>Select File</button>
+      <input type="text" placeholder="Enter file path..." ref={inputRef} onChange={fileChange}/> 
       <button type="submit" onClick={handleUpload}>Upload</button>
     </form>
     </div>);
