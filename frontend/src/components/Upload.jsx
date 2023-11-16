@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import "./Upload.css";
 import { open } from '@tauri-apps/api/dialog';
+import axios from "axios";
 
 const Upload = () => {
 
@@ -13,13 +14,19 @@ const Upload = () => {
         setFileName(e.target.value);
     }
 
-    const handleUpload = (e) => {
+    const handleUpload = (_) => {
         console.log("Send upload request for ", fileName);
+        axios.post("http://127.0.0.1:5000/upload", {"file":fileName})
+            .then((res) => {
+                console.log(res.data)
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
     }
 
-    const handleFileSelection = async (e) => {
+    const handleFileSelection = async (_) => {
         // Open a selection dialog for image files
-        console.log("OK")
         const selected = await open({
           multiple: false,
           title: "Select file"
@@ -29,6 +36,8 @@ const Upload = () => {
             console.log(selected)
             inputRef.current.value = selected
             setFileName(selected)
+        }else{
+            alert("No file selected!")
         }
     }
 
@@ -40,10 +49,10 @@ const Upload = () => {
       className="row"
       onSubmit={(e) => {
         e.preventDefault();
-        setTimeout(() => {setUploadMessage("File " + fileName + " uploaded.");}, 1000);
       }}
     >
-      <button onClick={handleFileSelection}>Select File</button>
+      <button onClick={handleFileSelection}>
+      </button>
       <input type="text" placeholder="Enter file path..." ref={inputRef} onChange={fileChange}/> 
       <button type="submit" onClick={handleUpload}>Upload</button>
     </form>
