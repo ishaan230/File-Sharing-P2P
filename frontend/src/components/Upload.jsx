@@ -1,9 +1,16 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./Upload.css";
 import { open } from '@tauri-apps/api/dialog';
 import axios from "axios";
 
 const Upload = () => {
+
+    const SERVER = "http://127.0.0.1:5000"
+    useEffect(()=>{
+        axios.put(`${SERVER}/update`)
+            .then((res)=>console.log(res))
+            .catch((err)=>console.log(err))
+    }, [])
 
     const [fileName, setFileName] = useState("");
     const [uploadMessage, setUploadMessage] = useState("");
@@ -16,7 +23,7 @@ const Upload = () => {
 
     const handleUpload = (_) => {
         console.log("Send upload request for ", fileName);
-        axios.post("http://127.0.0.1:5000/upload", {"file":fileName})
+        axios.post(`${SERVER}/upload`, {"file":fileName})
             .then((res) => {
                 console.log(res.data)
             })

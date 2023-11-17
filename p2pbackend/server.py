@@ -3,6 +3,7 @@ from distributor import Sender
 from flask_cors import CORS, cross_origin
 import json
 from utils import get_active_peers
+from userdetails import get_details
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -24,7 +25,7 @@ def upload_file():
     peers = get_active_peers()
     print("PEER", peers)
     s = Sender()
-    # s.upload_file(data['file'], [('0.0.0.0', 8000)])
+    s.upload_file(data['file'], peers)
     dic = {"status": 201, "message": "Uploading file"}
     response = jsonify(dic)
     return response
@@ -36,5 +37,22 @@ def download_file():
     print(request.data)
 
 
+@app.route("/update", methods=["PUT"])
+@cross_origin()
+def update_peer():
+    print("DETAILS")
+    user_details = get_details()
+    print("oKK")
+    print(user_details)
+    if not user_details:
+        dic = {"status": 404, "message": "USER NOT FOUND"}
+        res = jsonify(dic)
+        return res
+    else:
+        dic = {"status": 201, "message": "UPDATED"}
+        res = jsonify(dic)
+        print("OKKK", res)
+        return res
+ 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
