@@ -3,6 +3,7 @@ import central_reg
 import uuid
 
 def get_details():
+    print("GET details")
     try:
         mac = uuid.getnode()
         host_details = []
@@ -26,11 +27,12 @@ def get_details():
                 print("True")
                 update_existing_user(host_details, entry, object)
                 print("Done")
-                exit()
+                return True
         
         addnew_details_json = {"User_id": f"{host_details[0][0]}", "IP_Address": f"{host_details[0][1]}"}
         object.add_data_to_collection("Peer", addnew_details_json)
         print("New Details Added")
+        return True
 
     except socket.error as e:
         print(f"Error: {e}")
@@ -41,4 +43,4 @@ def update_existing_user(host_details, fetched_entry, object):
     object.update_data("Peer", fetched_entry, updated_details_json)
     print("Updated")
 
-get_details()
+# get_details()

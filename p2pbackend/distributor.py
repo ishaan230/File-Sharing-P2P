@@ -81,7 +81,7 @@ class Sender:
                     "file_id": file_id,
                     "extension": file_info[1], "content": part,
                     "offset": ctr, "length": len(parts),
-                    "user_ip": "TBD",
+                    "user_mac": "TBD",
                     "original_size": len(parts)*self.CHUNK_SIZE}
             json_meta = json.dumps(meta)
             print(json_meta)
