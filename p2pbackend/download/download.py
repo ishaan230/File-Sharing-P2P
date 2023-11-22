@@ -8,7 +8,7 @@ from utils import get_config
 
 def request_download(fid, offset, seeder):
 
-    timeout_dur = 100
+    timeout_dur = 15
     python_message = {
             "operation": "Request download",
             "file_uid": fid,
@@ -22,26 +22,35 @@ def request_download(fid, offset, seeder):
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.connect((seeder_ip, seeder_port))
+        sock.settimeout(timeout_dur) #Last argument is timeout in seconds.
         print("Connected to sender!")
+        
         sock.sendall(bytes(message, encoding='utf-8'))
         print("Sent request")
         
-        sock.setblocking(0)
-
-        ready = select.select([sock], [], [], timeout_dur) #Last argument is timeout in seconds.
-        print(ready)
-        if  ready[0]:
-            part = b''
+        try:
+            ack = sock.recv(1024).decode('utf-8')
+            print(ack)
+            
+            part = bytearray()
+            
             while True:
+                print("Receiving part...")
                 data = sock.recv(1024)
-                part += data
+                
                 if not data:
-                    with open(f"{SHARE_PATH}\{python_message['file_uid']}_{offset + 1}.part", "ab+") as file_part:
-                        file_part.write(part)
-                    return True
-        else:
-            print("Request timed out!")
+                        with open(f"{SHARE_PATH}\{python_message['file_uid']}_{offset + 1}.txt", "wb+") as file_part:
+                            file_part.write(part)
+                            return True
+                    # print(part)
+                    # return True
+                
+                part.extend(data)
+                
+        except Exception as e:
+            print(e)
             return False
+            
         
 
 def make_download_requests(file_info, seeder_info):
