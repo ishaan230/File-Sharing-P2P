@@ -34,7 +34,7 @@ class MongoWrapper:
             return str(data.inserted_id)
         except Exception:
             return None
-
+        
     # https://www.w3schools.com/python/python_mongodb_update.asp
     def update_data(self, collection_name, data, updated_data) -> bool:
         dt = {"$set": updated_data}
@@ -43,9 +43,37 @@ class MongoWrapper:
             return True
         except Exception:
             return False
+        
+    def get_peer_data(self, user_id):
+        try:
+            peer = self.primary_db["Peer"].find_one({ "user_id": user_id})
+            return peer
+        except Exception as e:
+            return e
+        
+    def get_file_data(self, file_uid):
+        try:
+            file = self.primary_db["File"].find_one({ "file_uid": file_uid})
+            return file
+        except Exception as e:
+            return e
+        
+    def get_parts_for_file(self, file_uid):
+        try:
+            cursor = self.primary_db["Part"].find({"file_uid": file_uid})
+            return cursor
+        except Exception as e:
+            return e
+        
+    def get_user_ip(self, user_id):
+        try:
+            peer = self.primary_db['Peer'].find_one({'user_id': user_id})
+            return peer['user_ip']
+        except Exception as e:
+            return e    
 
 
-mn = MongoWrapper()
+# mn = MongoWrapper()
 #
 # mn.add_data_to_collection("File", {"name": "Test file", "size": 50})
 #
