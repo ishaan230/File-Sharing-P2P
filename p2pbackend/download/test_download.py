@@ -54,14 +54,15 @@ print(data)
 
 
 #Code to work with Mongo - get
-'''
+
 mongo_cluster = MongoWrapper()
-data = mongo_cluster.get_collection_data("File") 
+data = mongo_cluster.get_collection_data("Part") 
 for item in data:
     print(item)
-'''
+
 
 #Code for seeder_info query
+'''
 mongo = MongoWrapper()
 file_info = mongo.get_file_data("1023")
 seeder_info = []
@@ -75,6 +76,8 @@ for part in parts_of_file:
       seeder_info += [user_info]
 
 print(seeder_info)
+
+'''
 
 
 

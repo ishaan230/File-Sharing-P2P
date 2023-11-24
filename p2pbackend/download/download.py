@@ -40,11 +40,9 @@ def request_download(fid, seeder):
                 data = sock.recv(1024)
                 
                 if not data:
-                        with open(f"{SHARE_PATH}\{python_message['file_uid']}_{int(seeder['offset']) + 2}.txt", "ab+") as file_part:
+                        with open(f"{SHARE_PATH}\{python_message['file_uid']}_{seeder['offset']}.txt", "wb+") as file_part:
                             file_part.write(part)
                             return True
-                    # print(part)
-                    # return True
                 
                 part.extend(data)
                 
@@ -89,8 +87,10 @@ def make_download_requests(file_info):
     for seeder_info in seeders_info:
             
         #Here will start send http request to Flask server to start concurrent downloads with each each seeder. Will have to refactor.
+
         if request_download(file_info['file_uid'], seeder_info):
             print("Downloaded file successfully!")
+            mongo.update_seeders_post_download(file_info['file_uid'], seeder_info['offset'])
         else:
             print("something went wrong!!")
 
