@@ -45,24 +45,23 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 
 #Code to work with Mongo - add
 
-'''
-mongo_cluster = MongoWrapper()
-part = {"offset": "0", "file_uid": "1023", "users": ["102"]}
-data = mongo_cluster.add_data_to_collection("Part", part) 
-print(data)
-'''
+# mongo_cluster = MongoWrapper()
+# part = {"offset": "2", "file_uid": "1023", 'users': ['102']}
+# data = mongo_cluster.add_data_to_collection("Part", part) 
+# print(data)
+
 
 
 #Code to work with Mongo - get
 
-mongo_cluster = MongoWrapper()
-data = mongo_cluster.get_collection_data("Part") 
-for item in data:
-    print(item)
+# mongo_cluster = MongoWrapper()
+# data = mongo_cluster.get_collection_data("Part") 
+# for item in data:
+#     print(item)
 
 
 #Code for seeder_info query
-'''
+
 mongo = MongoWrapper()
 file_info = mongo.get_file_data("1023")
 seeder_info = []
@@ -70,14 +69,15 @@ seeder_info = []
 parts_of_file = mongo.get_parts_for_file(file_info["file_uid"])
     
 for part in parts_of_file:
-  for user in part['users']:
+    for user in part['users']:
       user_ip = mongo.get_user_ip(user)
       user_info = { "offset": part['offset'], "user_ip": user_ip }
       seeder_info += [user_info]
+  
 
 print(seeder_info)
 
-'''
+
 
 
 

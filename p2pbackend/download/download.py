@@ -18,7 +18,8 @@ def request_download(fid, seeder):
     
     message = json.dumps(python_message)
     SHARE_PATH = os.environ['SHARE_PATH']
-    seeder_ip = seeder['user_ip']
+    seeder_ip = str(seeder['user_ip'])
+    print(seeder_ip)
     seeder_port = int(os.environ['U_PORT'])
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -40,7 +41,7 @@ def request_download(fid, seeder):
                 data = sock.recv(1024)
                 
                 if not data:
-                        with open(f"{SHARE_PATH}\{python_message['file_uid']}_{seeder['offset']}.txt", "wb+") as file_part:
+                        with open(f"{SHARE_PATH}\{python_message['file_uid']}_{int(seeder['offset']) + 3}.txt", "ab+") as file_part:
                             file_part.write(part)
                             return True
                 
@@ -51,14 +52,12 @@ def request_download(fid, seeder):
             return False
         
     
-            
-        
 
-def make_download_requests(file_info):
+def make_download_requests(file_uid):
 
     #fetch file_info(currently has incomplete data) and seeder_info from database using file uid
     mongo = MongoWrapper()
-    file_info = mongo.get_file_data(file_info["file_uid"])
+    file_info = mongo.get_file_data(file_uid)
     seeders_info = []
     
     parts_of_file = mongo.get_parts_for_file(file_info["file_uid"])
@@ -90,7 +89,7 @@ def make_download_requests(file_info):
 
         if request_download(file_info['file_uid'], seeder_info):
             print("Downloaded file successfully!")
-            mongo.update_seeders_post_download(file_info['file_uid'], seeder_info['offset'])
+            # mongo.update_seeders_post_download(file_info['file_uid'], seeder_info['offset'])
         else:
             print("something went wrong!!")
 
@@ -102,7 +101,7 @@ def main():
         "file_uid": "1023"
     }  
     
-    make_download_requests(file_info)
+    make_download_requests(file_info['file_uid'])
     
 
 if __name__ == "__main__":

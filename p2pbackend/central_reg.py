@@ -46,8 +46,15 @@ class MongoWrapper:
         
     def get_peer_data(self, user_id):
         try:
-            peer = self.primary_db["Peer"].find_one({ "user_id": user_id})
+            peer = self.primary_db["Peer"].find_one({ "User_id": user_id})
             return peer
+        except Exception as e:
+            return e
+        
+    def get_part_data(self, file_uid, offset):
+        try:
+            part = self.primary_db["Part"].find_one({ "file_uid": file_uid, "offset": offset})
+            return part
         except Exception as e:
             return e
         
@@ -55,6 +62,21 @@ class MongoWrapper:
         try:
             file = self.primary_db["File"].find_one({ "file_uid": file_uid})
             return file
+        except Exception as e:
+            return e
+        
+    def get_part_seeds(self, file_uid, offset):
+        try:
+            part = self.primary_db["Part"].find_one({ "file_uid": file_uid, "offset": offset})
+            return part['users']
+        except Exception as e:
+            return e
+        
+    def update_seeders_post_download(self, file_uid, offset):
+        try:
+            users = self.get_part_seeds(file_uid, offset)
+            users += [os.environ['USER_ID']]
+            self.update_data('Part', { 'file_uid': file_uid, 'offset': offset }, {'users': users})
         except Exception as e:
             return e
         
@@ -67,8 +89,8 @@ class MongoWrapper:
         
     def get_user_ip(self, user_id):
         try:
-            peer = self.primary_db['Peer'].find_one({'user_id': user_id})
-            return peer['user_ip']
+            peer = self.primary_db['Peer'].find_one({'User_id': user_id})
+            return peer['IP_Address']
         except Exception as e:
             return e    
 
