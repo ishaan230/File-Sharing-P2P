@@ -5,6 +5,7 @@ import json
 import hashlib
 
 from central_reg import MongoWrapper
+from userdetails import get_ip
 
 '''
 Provide addresses in tuple format
@@ -15,7 +16,8 @@ Handshaked peers should only be allowed
 class Sender:
     def __init__(self):
         self.hostname = socket.gethostname()
-        self.ip_addr = socket.gethostbyname(self.hostname)
+        self.ip_addr = get_ip()
+        # print("IPPPPP->", self.ip_addr)
         self.port = 65432
         self.alt_port = 54321
         self.CHUNK_SIZE = 1024
@@ -23,19 +25,24 @@ class Sender:
 
     def setup_listener(self):
         sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            sckt.bind((self.ip_addr, self.port))
-        except OSError:
-            sckt.bind((self.ip_addr, self.alt_port))
-        else:
-            return None
+        sckt.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        print(sckt)
+        # try:
+        #     sckt.bind((self.ip_addr, self.port))
+        # except OSError:
+        #     sckt.bind((self.ip_addr, self.alt_port))
+        # else:
+        #     return None
+        print("SEOCKER", sckt)
         return sckt
 
     def send_message(self, sckt, client_addr, content):
         if sckt:
             print(client_addr)
             sckt.connect(client_addr)
+            print("SENDING->", content)
             res = sckt.send(content)
+            # sckt.send(b'\0')
             sckt.close()
             print(res)
         else:
@@ -85,10 +92,13 @@ class Sender:
                     "original_size": len(parts)*self.CHUNK_SIZE}
             json_meta = json.dumps(meta)
             print(json_meta)
+            print(sckt)
+            self.send_message(sckt, peer, json_meta.encode('utf-8'))
+            # sckt.close()
+            # self.send_message(sckt, peer, '\0'.encode('utf-8'))
             meta.pop("content")
+            print("Udating registry")
             self.db_engine.add_data_to_collection("Part", meta)
-
-            self.send_message(sckt, peer, json_meta)
         print("Sent")
 
 

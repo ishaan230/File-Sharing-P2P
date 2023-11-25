@@ -5,5 +5,6 @@ def get_active_peers():
     peers = db.get_collection_data("Peer")
     li = []
     for p in peers:
+        print(p)
         li.append((p['IP_Address'], 8001))
     return li

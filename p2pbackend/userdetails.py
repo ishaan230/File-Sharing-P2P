@@ -2,6 +2,15 @@ import socket
 import central_reg
 import uuid
 
+
+def get_ip():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.connect(("8.8.8.8", 80))
+    ip = sock.getsockname()[0]
+    sock.close()
+    return ip
+
+
 def get_details():
     print("GET details")
     try:

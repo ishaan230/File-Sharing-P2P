@@ -3,10 +3,47 @@
     padding-top: 10vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: start;
     text-align: center;
   }
   
+  .list-container {
+  list-style-type: none;
+  padding: 0;
+}
+
+.list-item {
+  margin-bottom: 16px;
+}
+.flex-container {
+  display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-item {
+  flex-basis: calc(50% - 16px); /* Two items side by side, adjust margin as needed */
+  margin-right: 16px; /* Adjust as needed */
+  margin-bottom: 16px; /* Adjust as needed */
+}
+
+.button {
+  width: 100%;
+  padding: 12px 16px;
+  cursor: pointer;
+  background-color: #222222aa;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.button:hover {
+  background-color: #2980b9;
+}
+
   .row {
     display: flex;
     justify-content: center;
