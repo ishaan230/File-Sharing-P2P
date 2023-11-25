@@ -59,23 +59,34 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 # for item in data:
 #     print(item)
 
+#Code to work with mongo - delete
+# mongo = MongoWrapper()
+# result = mongo.delete_part("1023", "0")
+# print(result)
+
 
 #Code for seeder_info query
 
-mongo = MongoWrapper()
-file_info = mongo.get_file_data("1023")
-seeder_info = []
+# mongo = MongoWrapper()
+# file_info = mongo.get_file_data("1023")
+# seeder_info = []
     
-parts_of_file = mongo.get_parts_for_file(file_info["file_uid"])
+# parts_of_file = mongo.get_parts_for_file(file_info["file_uid"])
     
-for part in parts_of_file:
-    for user in part['users']:
-      user_ip = mongo.get_user_ip(user)
-      user_info = { "offset": part['offset'], "user_ip": user_ip }
-      seeder_info += [user_info]
+# for part in parts_of_file:
+#     for user in part['users']:
+#       user_ip = mongo.get_user_ip(user)
+#       user_info = { "offset": part['offset'], "user_ip": user_ip }
+#       seeder_info += [user_info]
   
 
-print(seeder_info)
+# print(seeder_info)
+
+#Testing endpoint
+def hello():
+    print("Hello World!")
+
+
 
 
 

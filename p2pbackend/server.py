@@ -7,7 +7,6 @@ from userdetails import get_details
 from download.download import make_download_requests, request_download
 
 
-
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -37,9 +36,16 @@ def upload_file():
 @app.route("/download/<file_uid>", methods=["GET"])
 @cross_origin()
 def download_file(file_uid):
-    print(request.data)
-    make_download_requests(file_uid)
-    return file_uid
+    message = make_download_requests(file_uid)
+    return "Success"
+
+@app.route("/download/request", methods=["POST"])
+@cross_origin()
+def request_part():
+    data = request.json
+    data = json.loads(data)
+    request_download(data['file_uid'], data['seeder_info'])
+    return "Success"
     
 
 

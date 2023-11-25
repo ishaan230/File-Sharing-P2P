@@ -93,6 +93,13 @@ class MongoWrapper:
             return peer['IP_Address']
         except Exception as e:
             return e    
+        
+    def delete_part(self, file_uid, offset):
+        try:
+            result = self.primary_db["Part"].delete_one({'file_uid': file_uid, 'offset': offset})
+            return result
+        except Exception as e:
+            return e
 
 
 # mn = MongoWrapper()

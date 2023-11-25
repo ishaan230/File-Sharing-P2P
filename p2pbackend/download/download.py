@@ -2,13 +2,15 @@ import socket
 import json
 import os
 import sys
-from utils import get_config
+import requests
+from download.utils import get_config
 sys.path.append("../")
 from central_reg import MongoWrapper
 
 
 def request_download(fid, seeder):
 
+    get_config()
     timeout_dur = 15
     python_message = {
             "operation": "Request download",
@@ -55,7 +57,8 @@ def request_download(fid, seeder):
 
 def make_download_requests(file_uid):
 
-    #fetch file_info(currently has incomplete data) and seeder_info from database using file uid
+    # fetch file_info and seeder_info from database using file uid
+    get_config()
     mongo = MongoWrapper()
     file_info = mongo.get_file_data(file_uid)
     seeders_info = []
@@ -83,15 +86,22 @@ def make_download_requests(file_uid):
     -size
     '''
 
+
     for seeder_info in seeders_info:
             
         #Here will start send http request to Flask server to start concurrent downloads with each each seeder. Will have to refactor.
 
-        if request_download(file_info['file_uid'], seeder_info):
-            print("Downloaded file successfully!")
-            # mongo.update_seeders_post_download(file_info['file_uid'], seeder_info['offset'])
+        request_data = json.dumps({ 'file_uid': file_info['file_uid'], 'seeder_info': seeder_info})
+        # request_data = { 'file_uid': file_info['file_uid'], 'seeder_info': seeder_info}
+        if requests.post("http://127.0.0.1:5000/download/request", json = request_data).text != "Success":
+            return "Something went wrong!"
         else:
-            print("something went wrong!!")
+            pass
+            # mongo.update_seeders_post_download(file_info['file_uid'], seeder_info['offset'])
+    
+    return "Success!"
+        
+    
 
     
 def main():
