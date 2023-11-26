@@ -2,5 +2,6 @@ p2pbackend/venv
 p2pbackend/.env
 peerenv/
 p2pbackend/download/.env
+p2pbackend/file_utils/__pycache__/
 share/
 __pycache__/
