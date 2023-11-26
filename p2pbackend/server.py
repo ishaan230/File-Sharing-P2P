@@ -4,8 +4,7 @@ from distributor import Sender
 from flask_cors import CORS, cross_origin
 import json
 from utils import get_active_peers
-from userdetails import get_details
-from download.download import make_download_requests, request_download
+# from download.download import make_download_requests, request_download
 
 
 from userdetails import get_details, get_ip
