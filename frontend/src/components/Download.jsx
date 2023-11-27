@@ -26,7 +26,7 @@ const Download = () => {
 
     const onButtonClick = (hash)=>{
         console.log(hash)
-        axios.post(`${SERVER}/download/{hash}`)
+        axios.get(`${SERVER}/download/${hash}`)
             .then((res)=>{console.log(res)})
             .except((err)=>{console.log(err)})
     }

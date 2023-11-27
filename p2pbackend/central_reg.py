@@ -58,9 +58,9 @@ class MongoWrapper:
         except Exception as e:
             return e
         
-    def get_file_data(self, file_uid):
+    def get_file_data(self, hash):
         try:
-            file = self.primary_db["File"].find_one({ "file_uid": file_uid})
+            file = self.primary_db["File"].find_one({ "hash": hash})
             return file
         except Exception as e:
             return e

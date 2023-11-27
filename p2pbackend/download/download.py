@@ -55,15 +55,15 @@ def request_download(fid, seeder):
         
     
 
-def make_download_requests(file_uid):
+def make_download_requests(hash):
 
     # fetch file_info and seeder_info from database using file uid
     get_config()
     mongo = MongoWrapper()
-    file_info = mongo.get_file_data(file_uid)
+    file_info = mongo.get_file_data(hash)
     seeders_info = []
     
-    parts_of_file = mongo.get_parts_for_file(file_info["file_uid"])
+    parts_of_file = mongo.get_parts_for_file(file_info["hash"])
     
     for part in parts_of_file:
         for user in part['users']:
@@ -91,7 +91,7 @@ def make_download_requests(file_uid):
             
         #Here will start send http request to Flask server to start concurrent downloads with each each seeder. Will have to refactor.
 
-        request_data = json.dumps({ 'file_uid': file_info['file_uid'], 'seeder_info': seeder_info})
+        request_data = json.dumps({ 'file_uid': file_info['hash'], 'seeder_info': seeder_info})
         # request_data = { 'file_uid': file_info['file_uid'], 'seeder_info': seeder_info}
         if requests.post("http://127.0.0.1:5000/download/request", json = request_data).text != "Success":
             return "Something went wrong!"

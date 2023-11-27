@@ -46,7 +46,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 #Code to work with Mongo - add
 
 # mongo_cluster = MongoWrapper()
-# part = {"offset": "2", "file_uid": "1023", 'users': ['102']}
+# part = {"offset": "2", "file_uid": "1023", 'size': 96, 'users': ['102']}
 # data = mongo_cluster.add_data_to_collection("Part", part) 
 # print(data)
 
@@ -54,10 +54,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 
 #Code to work with Mongo - get
 
-# mongo_cluster = MongoWrapper()
-# data = mongo_cluster.get_collection_data("Part") 
-# for item in data:
-#     print(item)
+mongo_cluster = MongoWrapper()
+data = mongo_cluster.get_collection_data("Part") 
+for item in data:
+    print(item)
 
 #Code to work with mongo - delete
 # mongo = MongoWrapper()

@@ -4,7 +4,7 @@ from distributor import Sender
 from flask_cors import CORS, cross_origin
 import json
 from utils import get_active_peers
-# from download.download import make_download_requests, request_download
+from download.download import make_download_requests, request_download
 
 
 from userdetails import get_details, get_ip
@@ -74,8 +74,9 @@ def upload_file():
 @app.route("/download/<file_uid>", methods=["GET"])
 @cross_origin()
 def download_file(file_uid):
+    print(file_uid)
     message = make_download_requests(file_uid)
-    return "Success"
+    return message
 
 @app.route("/download/request", methods=["POST"])
 @cross_origin()
