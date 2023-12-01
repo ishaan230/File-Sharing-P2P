@@ -6,7 +6,7 @@ import requests
 from download.utils import get_config
 sys.path.append("../")
 from central_reg import MongoWrapper
-
+from file_utils import stitch_file
 
 def request_download(fid, seeder):
 
@@ -19,7 +19,7 @@ def request_download(fid, seeder):
         }
     
     message = json.dumps(python_message)
-    SHARE_PATH = os.environ['SHARE_PATH']
+    SHARE_PATH = os.environ['DOWNLOAD_SHARE_PATH']
     seeder_ip = str(seeder['user_ip'])
     print(seeder_ip)
     seeder_port = int(os.environ['U_PORT'])
@@ -40,10 +40,11 @@ def request_download(fid, seeder):
             
             while True:
                 print("Receiving part...")
-                data = sock.recv(1024)
+                data = sock.recv(1024 * 5)
                 
                 if not data:
-                        with open(f"{SHARE_PATH}\{python_message['file_uid']}_{int(seeder['offset']) + 3}.txt", "ab+") as file_part:
+                        # part = part.decode('utf-8')
+                        with open(f"{SHARE_PATH}\{python_message['file_uid']}_{seeder['offset']}.txt", "wb+") as file_part:
                             file_part.write(part)
                             return True
                 
@@ -53,23 +54,28 @@ def request_download(fid, seeder):
             print(e)
             return False
         
-def stitch_parts(hash):
+def stitch_partfiles(hash):
     get_config()
-    SHARE_PATH = os.environ['SHARE_PATH']
+    SHARE_PATH = os.environ['DOWNLOAD_SHARE_PATH']
     mongo = MongoWrapper()
     file_info = mongo.get_file_data(hash)
     file_data = b''
+    parts = []
     try:
         for part in range(file_info['num_parts']):
-            with open(SHARE_PATH + f"\{hash}_{part}.txt", "rb") as part_desc:
+            with open(SHARE_PATH + f"\{hash}_{part}.txt", "r") as part_desc:
                     part_data = part_desc.read()
-                    file_data += part_data
+                    parts += [part_data]
+                    
+        file_data = stitch_file(parts)
         
-        with open(SHARE_PATH + f"\{hash}{file_info['type']}", "rb") as file:
-            file.write()
+        stitched_file_path = os.path.join(SHARE_PATH, f"{file_info['name']}_{hash}.{file_info['type']}")
+        with open(stitched_file_path, "wb+") as file:
+            file.write(file_data)
             
     except Exception as e:
         print("Could not stitch file")
+        print(e)
         return e
     
     

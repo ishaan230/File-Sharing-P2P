@@ -4,4 +4,6 @@ peerenv/
 p2pbackend/download/.env
 p2pbackend/file_utils/__pycache__/
 share/
+download-share/
+upload-share/
 __pycache__/

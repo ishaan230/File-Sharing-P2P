@@ -82,7 +82,7 @@ class MongoWrapper:
         
     def get_parts_for_file(self, file_uid):
         try:
-            cursor = self.primary_db["Part"].find({"file_uid": file_uid})
+            cursor = self.primary_db["Part"].find({"file_id": file_uid})
             return cursor
         except Exception as e:
             return e

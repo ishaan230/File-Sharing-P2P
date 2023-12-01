@@ -7,3 +7,4 @@ def get_config():
     except Exception:
         print("Could not load configuration")
         return False
+    

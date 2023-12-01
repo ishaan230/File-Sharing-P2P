@@ -2,6 +2,7 @@ import socket
 import json
 import os
 import sys
+import base64
 from utils import get_config
 
 def listen_download_req():
@@ -10,7 +11,7 @@ def listen_download_req():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         
         sock.bind((LOCALHOST_IP, HOST_PORT))
-        sock.listen()
+        sock.listen(20)
         print("Listening for requests...")
         
         conn_sock, addr = sock.accept()
@@ -30,15 +31,16 @@ def listen_download_req():
                 
 
 def send_part(request, sock):
-    SHARE_PATH = os.environ['SHARE_PATH']
+    SHARE_PATH = os.environ['UPLOAD_SHARE_PATH']
     file_uid = request['file_uid']
     offset = request['offset']
     part_path = f"{SHARE_PATH}\{file_uid}_{offset}.txt"
 
     # #Assume that files parts are available individually as well 
-    with open(part_path, "rb") as file_to_send:
-        part_content = file_to_send.read()
-        print(part_content)
+    with open(part_path, "r") as file_to_send:
+        content = file_to_send.read()
+        part_content = bytes(content, encoding= 'utf-8')
+        print(type(part_content))
         sock.sendall(part_content)
 
     print("Sent part!")
@@ -46,7 +48,8 @@ def send_part(request, sock):
     
 def main():
     get_config()
-    listen_download_req()
+    while True:
+        listen_download_req()
 
 if __name__ == "__main__":
     main()
