@@ -53,8 +53,28 @@ def request_download(fid, seeder):
             print(e)
             return False
         
+def stitch_parts(hash):
+    get_config()
+    SHARE_PATH = os.environ['SHARE_PATH']
+    mongo = MongoWrapper()
+    file_info = mongo.get_file_data(hash)
+    file_data = b''
+    try:
+        for part in range(file_info['num_parts']):
+            with open(SHARE_PATH + f"\{hash}_{part}.txt", "rb") as part_desc:
+                    part_data = part_desc.read()
+                    file_data += part_data
+        
+        with open(SHARE_PATH + f"\{hash}{file_info['type']}", "rb") as file:
+            file.write()
+            
+    except Exception as e:
+        print("Could not stitch file")
+        return e
     
-
+    
+        
+    
 def make_download_requests(hash):
 
     # fetch file_info and seeder_info from database using file uid

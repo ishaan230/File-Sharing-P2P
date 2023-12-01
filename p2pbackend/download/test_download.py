@@ -55,7 +55,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 #Code to work with Mongo - get
 
 mongo_cluster = MongoWrapper()
-data = mongo_cluster.get_collection_data("Part") 
+data = mongo_cluster.get_collection_data("File") 
 for item in data:
     print(item)
 
