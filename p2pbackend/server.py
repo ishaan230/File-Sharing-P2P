@@ -5,7 +5,7 @@ from flask_cors import CORS, cross_origin
 import json
 from utils import get_active_peers
 from download.download import make_download_requests, request_download, stitch_parts
-
+import os
 
 from userdetails import get_details, get_ip
 from collector import setup_recieve_data
@@ -50,7 +50,12 @@ def setup():
         asyncio_thread = Thread(target=run_asyncio_loop)
         asyncio_thread.start()
         conf = True
-        print("DOne")
+        print("Allocated!")
+        print("Making dirs....")
+        try:
+            os.mkdir(f'/home/{os.getlogin()}/.localran/')
+        except FileExistsError:
+            print("Exists...")
         dic = {"status": 201, "message": "Setup done"}
         return jsonify(dic)
     return jsonify({"status":400, "message": "already done"})
@@ -63,7 +68,7 @@ def upload_file():
     data = json.loads(data)
     # peers = get_active_peers()
     peers = [(get_ip(), 8010)]
-    print("PEER", peers)
+    print("PEERS ", peers)
     s = Sender()
     s.upload_file(data['file'], peers)
     dic = {"status": 201, "message": "Uploading file"}
@@ -86,7 +91,6 @@ def request_part():
     data = json.loads(data)
     request_download(data['file_uid'], data['seeder_info'])
     return "Success"
-    
 
 
 @app.route("/update", methods=["PUT"])
@@ -94,8 +98,7 @@ def request_part():
 def update_peer():
     print("DETAILS")
     user_details = get_details()
-    print("oKK")
-    print(user_details)
+    print("User details: ", user_details)
     if not user_details:
         dic = {"status": 404, "message": "USER NOT FOUND"}
         res = jsonify(dic)
@@ -105,6 +108,10 @@ def update_peer():
         res = jsonify(dic)
         print("OKKK", res)
         return res
- 
+
+
 if __name__ == "__main__":
+    # intialize Port
+    # run_asyncio_loop()
+    # print("Upload Receive port setup...")
     app.run(host="0.0.0.0")
