@@ -30,9 +30,3 @@ def stitch_file(file_parts):
     return x
 
 
-# parts = break_file('ok.jpg', 1024)
-#
-# x = stitch_file(parts)
-#
-# with open('flp.jpg', 'wb') as f:
-#     f.write(x)
