@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import subprocess
 import asyncio
 from distributor import Sender
 from flask_cors import CORS, cross_origin
@@ -6,8 +7,9 @@ import json
 from utils import get_active_peers
 from download.download import make_download_requests, request_download, stitch_parts
 import os
+import signal
 
-from userdetails import get_details, get_ip
+from userdetails import get_details, get_ip, set_user_inactive
 from collector import setup_recieve_data
 from threading import Thread
 from central_reg import MongoWrapper
@@ -61,13 +63,24 @@ def setup():
     return jsonify({"status":400, "message": "already done"})
 
 
+@app.route("/deactivate",methods=["PUT"])
+def close():
+    set_user_inactive()
+    return jsonify({"status": 200, "message": "closed"})
+
+
 @app.route("/upload", methods=["POST"])
 @cross_origin()
 def upload_file():
     data = request.data.decode('utf-8').replace("'",'"')
     data = json.loads(data)
-    # peers = get_active_peers()
-    peers = [(get_ip(), 8010)]
+    peers = get_active_peers(True)
+    if len(peers) == 0:
+        res = jsonify({"message": "No active peers found"})
+        res.status_code = 404
+        return res
+    # peers = [(get_ip(), 8010)]
+    print(get_ip())
     print("PEERS ", peers)
     s = Sender()
     s.upload_file(data['file'], peers)
@@ -110,6 +123,7 @@ def update_peer():
         return res
 
 
+# signal.signal(signal.SIGINT, close)
 if __name__ == "__main__":
     # intialize Port
     # run_asyncio_loop()
