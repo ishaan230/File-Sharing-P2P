@@ -9,7 +9,10 @@ const Upload = () => {
     useEffect(()=>{
         axios.put(`${SERVER}/update`)
             .then((res)=>console.log(res))
-            .catch((err)=>console.log(err))
+            .catch((err)=>{
+                console.log("ERROR: ", err)
+                alert("No Active Peers are present on the network")
+            })
     }, [])
 
     const [fileName, setFileName] = useState("");

@@ -20,7 +20,7 @@ class Sender:
         self.ip_addr = get_ip()
         self.port = 65432
         self.alt_port = 54321
-        self.CHUNK_SIZE = 1024*1024
+        self.CHUNK_SIZE = 65530
         self.db_engine = MongoWrapper()
 
     def setup_listener(self):
@@ -41,7 +41,7 @@ class Sender:
                 if sent == 0:
                     raise RuntimeError("Socket Connection broken")
                 total_sent += sent
-                print(total_sent)
+                print("SENT ", total_sent)
         else:
             raise RuntimeError("Unable to bind socket")
 

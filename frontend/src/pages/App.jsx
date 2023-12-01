@@ -10,6 +10,28 @@ function App() {
   const SERVER = "http://127.0.0.1:5000"
   const [showUpload, setShowUpload] = useState(true);
   const [showDownload, setShowDownload] = useState(false);
+  const [toggleUp, setToggle] = useState(false)
+
+  const closeBtn = async () => {
+          console.log("OKKK")
+      if(!toggleUp){
+          axios.put(`${SERVER}/deactivate`)
+            .then((res)=>{
+                alert("You are now inactive on the network")
+                setToggle(true)
+            })
+            .catch((err)=>alert("something happened"))
+      }else{
+          axios.put(`${SERVER}/update`)
+            .then((res)=>{
+                alert("You are now active on the network")
+                setToggle(false)
+            })
+            .catch((err)=>{
+                alert("Some problem occured")
+            })
+      }
+    };
 
   useEffect(()=>{
     axios.post(`${SERVER}/startup`)
@@ -33,6 +55,7 @@ function App() {
 
   return (
     <>
+      <button onClick={closeBtn}>{toggleUp?"Activate":"Deactivate"}</button>
       <Header showUpload = {changeUpload} showDownload = {changeDownload}/>
       {showDownload && <Download />}
       {showUpload && <Upload />}
