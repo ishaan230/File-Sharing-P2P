@@ -13,8 +13,8 @@ function App() {
   const [toggleUp, setToggle] = useState(false)
 
   const closeBtn = async () => {
-          console.log("OKKK")
       if(!toggleUp){
+          console.log("OKKK")
           axios.put(`${SERVER}/deactivate`)
             .then((res)=>{
                 alert("You are now inactive on the network")
@@ -34,6 +34,7 @@ function App() {
     };
 
   useEffect(()=>{
+    confirm("Welcome to Nirvana!")
     axios.post(`${SERVER}/startup`)
       .then((res)=>{
         console.log(res)

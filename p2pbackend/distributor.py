@@ -78,7 +78,6 @@ class Sender:
         file_meta = {"name": orig_file+file_info[1], "hash": filename, "size": len(parts) * self.CHUNK_SIZE, "type": file_info[1]}
         file_id = self.db_engine.add_data_to_collection("File", file_meta)
         print("File Id: ", file_id)
-        fst = True
         timestamp = time.time()
         for ctr, peer, part in self.populate_peers(peers, parts):
             sckt = self.setup_listener()
@@ -97,6 +96,8 @@ class Sender:
             print("Sent for ", peer)
             meta.pop("content")
             print("Udating registry")
+            self.db_engine.add_data_to_collection('Part', meta)
+            print("Updated Registry")
 
 
 # if __name__ == "__main__":

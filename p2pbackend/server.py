@@ -54,10 +54,6 @@ def setup():
         conf = True
         print("Allocated!")
         print("Making dirs....")
-        try:
-            os.mkdir(f'/home/{os.getlogin()}/.localran/')
-        except FileExistsError:
-            print("Exists...")
         dic = {"status": 201, "message": "Setup done"}
         return jsonify(dic)
     return jsonify({"status":400, "message": "already done"})

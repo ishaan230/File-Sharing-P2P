@@ -6,13 +6,17 @@ import axios from "axios";
 const Upload = () => {
 
     const SERVER = "http://127.0.0.1:5000"
+    const [upd, setUpd] = useState(false)
     useEffect(()=>{
-        axios.put(`${SERVER}/update`)
-            .then((res)=>console.log(res))
-            .catch((err)=>{
-                console.log("ERROR: ", err)
-                alert("No Active Peers are present on the network")
-            })
+        if(!upd){
+            axios.put(`${SERVER}/update`)
+                .then((res)=>{
+                    console.log(res)
+                })
+                .catch((err)=>{
+                })
+            setUpd(true)
+        }
     }, [])
 
     const [fileName, setFileName] = useState("");
@@ -31,7 +35,11 @@ const Upload = () => {
                 console.log(res.data)
             })
             .catch((err)=>{
-                console.log(err)
+                console.log("Error", err)
+                alert("No Active Peers found!")
+                if(err.status_code == 404){
+                    alert("No Active Peers found!")
+                }
             })
     }
 

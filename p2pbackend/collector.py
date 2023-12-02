@@ -22,6 +22,11 @@ async def save_data(client):
     #     exit()
     # print("VAVVV", st)
     # Extract bin string
+    try:
+        os.mkdir(f'/home/{os.getlogin()}/.localran/')
+    except FileExistsError:
+        print("Exists...")
+
     file_content = st['content']
     file_content = base64.b64decode(file_content)
     # print("File content: ", file_content)
