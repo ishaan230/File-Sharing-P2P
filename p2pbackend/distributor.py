@@ -20,7 +20,8 @@ class Sender:
         self.ip_addr = get_ip()
         self.port = 65432
         self.alt_port = 54321
-        self.CHUNK_SIZE = 65530
+        # self.CHUNK_SIZE = 65530
+        self.CHUNK_SIZE = 1024
         self.db_engine = MongoWrapper()
 
     def setup_listener(self):
